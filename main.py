@@ -30,7 +30,7 @@ def run_config_cdn(ak: str, sk: str, domain: config.Domain, cert_id: str):
             https = _cdn.Https
             break
     print(https)
-    cdn.update_cdn_ssl(cdn_client, domain, cert_id)
+    cdn.update_cdn_ssl(cdn_client, domain.domain, cert_id)
 
 
 if __name__ == "__main__":
