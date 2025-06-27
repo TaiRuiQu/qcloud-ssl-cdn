@@ -34,12 +34,6 @@ def run_config_cdn(ak: str, sk: str, domain: config.Domain, cert_id: str):
 
 
 if __name__ == "__main__":
-    domain = config.DOMAINS[0]
-    ak = domain.tencent_ak
-    sk = domain.tencent_sk
-    cdn_client = cdn.get_cdn_client_instance(ak, sk)
-    print(cdn.get_cdn_detail_info(cdn_client))
-    exit(0)
     args = sys.argv[1:]
     target = args[0] if len(args) > 0 else None
     for domain in config.DOMAINS:
