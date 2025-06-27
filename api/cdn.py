@@ -8,17 +8,21 @@ from datetime import datetime
 from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentCloudSDKException
 # 导入 cdn 产品模块的 models
 from tencentcloud.cdn.v20180606 import models
+from tencentcloud.cdn.v20180606.cdn_client import CdnClient
 
 from api.get_client_profile import get_client_instance
 
-def get_cdn_client_instance(id, key):
+
+def get_cdn_client_instance(id, key) -> CdnClient:
     '''获取cdn的实例，用于后面对cdn的各种操作
     '''
     client = get_client_instance(id, key, "cdn")
+    if not isinstance(client, CdnClient):
+        raise TypeError("Returned client is not a CdnClient instance")
     return client
 
 
-def get_cdn_detail_info(client):
+def get_cdn_detail_info(client: CdnClient):
     '''获取所有CDN的详细信息，返回列表
     '''
     try:
@@ -32,7 +36,7 @@ def get_cdn_detail_info(client):
         # filter.Fuzzy = False
         params = {}
         req.from_json_string(json.dumps(params))
-    
+
         resp = client.DescribeDomainsConfig(req)
         # print(resp.to_json_string())
         print("获取所有cdn详细信息成功")
@@ -41,6 +45,7 @@ def get_cdn_detail_info(client):
     except TencentCloudSDKException as err:
         print(err)
         return []
+
 
 def get_cdn_basic_info(client, domain_name):
     '''获取指定CDN的基本信息
@@ -52,13 +57,13 @@ def get_cdn_basic_info(client, domain_name):
             "Filters": [
                 {
                     "Name": "domain",
-                    "Value": [ domain_name ],
+                    "Value": [domain_name],
                     "Fuzzy": False
                 }
             ]
         }
         req.from_json_string(json.dumps(params))
-    
+
         resp = client.DescribeDomains(req)
         # print(resp.to_json_string())
         print("获取指定cdn基本信息成功")
@@ -67,6 +72,7 @@ def get_cdn_basic_info(client, domain_name):
     except TencentCloudSDKException as err:
         print(err)
         return []
+
 
 def get_cdn_url_push_info(client):
     '''查询CDN预热配额和每日可用量
@@ -167,14 +173,15 @@ def update_cdn_ssl(client, domain, cert_id):
             }
         }
         req.from_json_string(json.dumps(params))
-    
+
         resp = client.UpdateDomainConfig(req)
         print(resp.to_json_string())
         print("成功更新域名为{0}的CDN的ssl证书为{1}".format(domain, cert_id))
-    
+
     except TencentCloudSDKException as err:
         print(err)
         exit("为CDN设置SSL证书{}出错".format(cert_id))
+
 
 def update_cdn_https_options(client, domain, http2, hsts, age, hsts_subdomain, ocsp):
     '''为指定域名的CDN的HTTPS开启HTTP 2.0、HSTS、OCSP等多个可选项
@@ -203,14 +210,15 @@ def update_cdn_https_options(client, domain, http2, hsts, age, hsts_subdomain, o
             params["Https"]["OcspStapling"] = "on"
 
         req.from_json_string(json.dumps(params))
-    
+
         resp = client.UpdateDomainConfig(req)
         print(resp.to_json_string())
         print("成功开启域名为{0}的CDN的HTTPS选项".format(domain))
-    
+
     except TencentCloudSDKException as err:
         print(err)
         exit("为{}的CDN开启HTTPS选项功能出错".format(domain))
+
 
 def describe_cert_domains(client, cert_id):
     '''获取指定证书ID的CDN域名列表
@@ -221,7 +229,7 @@ def describe_cert_domains(client, cert_id):
             "CertId": cert_id
         }
         req.from_json_string(json.dumps(params))
-    
+
         resp = client.DescribeCertDomains(req)
         # print(resp.to_json_string())
         print("获取指定ssl证书id的CDN域名列表成功")
